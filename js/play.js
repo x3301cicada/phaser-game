@@ -114,21 +114,3 @@ class Play {
         this.scene.start('menu', {score:this.score });
     }
 }
-
-
-
-
-
-
-let game = new Phaser.Game({
-    width: 500,
-    height: 340,
-    backgroundColor: '#3498db',
-    physics: { default: 'arcade' },
-    parent: 'game'
-});
-game.scene.add('main', Main);
-game.scene.start('main');
-
-
-
