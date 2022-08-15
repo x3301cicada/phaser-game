@@ -49,7 +49,7 @@ class Play {
 
         let enemy = this.enemies.create(250, -10, 'enemy');
         enemy.body.gravity.y = 500;
-        enemy.body.velocity.x = enemySpeed+20;
+        enemy.body.velocity.x = Phaser.Math.RND.pick([enemySpeed+20,-(enemySpeed)-20]);
         enemy.body.bounce.x = 1;
         console.log(this.score);
         this.time.addEvent({
