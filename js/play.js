@@ -45,23 +45,24 @@ class Play {
     addEnemy() {
         let enemy = this.enemies.create(250, -10, 'enemy');
         enemy.body.gravity.y = 500;
-        enemy.body.velocity.x = Phaser.Math.RND.pick([-100, 100]);
+        enemy.body.velocity.x = Phaser.Math.RND.pick([-200, 200,-100,100,-150,150,-50,50,-60,60,-300,300]);
         enemy.body.bounce.x = 1;
 
         this.time.addEvent({
-            delay: 10000,
+            delay: 40000,
             callback: () => enemy.destroy(),
         })
     }
 
     updateCoinPosition() {
+        let xpos = Math.random();
         let positions = [
-            { x: 140, y: 60 },
-            { x: 360, y: 60 },
-            { x: 60, y: 140 },
-            { x: 440, y: 140 },
-            { x: 130, y: 300 },
-            { x: 370, y: 300 },
+            { x: 30+xpos*440, y: 60 },
+            { x: 30+xpos*440, y: 60 },
+            { x: 30+xpos*440, y: 140 },
+            { x: 30+xpos*440, y: 140 },
+            { x: 30+xpos*440, y: 300 },
+            { x: 30+xpos*440, y: 300 },
         ]
 
         positions = positions.filter(coin => coin.x !== this.coin.x);
