@@ -43,11 +43,15 @@ class Play {
     }
 
     addEnemy() {
+
+        let enemySpeed = -10000/(this.score+50-16.6)+300;
+        console.log(enemySpeed);
+
         let enemy = this.enemies.create(250, -10, 'enemy');
         enemy.body.gravity.y = 500;
-        enemy.body.velocity.x = Phaser.Math.RND.pick([-200, 200,-100,100,-150,150,-50,50,-60,60,-300,300]);
+        enemy.body.velocity.x = enemySpeed+20;
         enemy.body.bounce.x = 1;
-
+        console.log(this.score);
         this.time.addEvent({
             delay: 40000,
             callback: () => enemy.destroy(),
