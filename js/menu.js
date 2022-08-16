@@ -4,7 +4,7 @@ class Menu{
     create(data){
         let score = data.score ? data.score :0
         this.add.image(250, 170, 'background');
-        let nameLabel = this.add.text(250,80,'Super Coin Box',
+        let nameLabel = this.add.text(250,80,'Super  Cola Box',
         {font: '50px Arial',fill: '#fff'});
         nameLabel.setOrigin(0.5,0.5);
         let scoreText = 'score:'+score;

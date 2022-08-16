@@ -4,61 +4,92 @@ class Play {
 
     create() {
         this.player = this.physics.add.sprite(250, 170, 'player');
+        
         this.player.body.gravity.y = 500;
-
+      
         this.arrow = this.input.keyboard.createCursorKeys();
         this.createWorld();
-        this.coin = this.physics.add.sprite(60, 130, 'coin');
+        this.cola = this.physics.add.sprite(60, 130, 'cola');
         this.scoreLabel = this.add.text(30, 25, 'score:0',
             { font: '18px Arial', fill: '#fff' })
         this.score = 0;
-        this.enemies = this.physics.add.group();
+
+
+        this.slimes = this.physics.add.group();
+        this.guns = this.physics.add.group();
 
         this.time.addEvent({
             delay: 2000,
-            callback: () => this.addEnemy(),
+            callback: () => this.addSlime(),
             loop: true,
 
         });
 
-
+        console.log("create");
     }
 
     update() {
 
         this.physics.collide(this.player, this.walls);
-        this.physics.collide(this.enemies, this.walls);
+        this.physics.collide(this.guns, this.walls);
+ //       this.physics.collide(this.guns, this.slimes);
+
+        this.physics.overlap(this.guns, this.slimes, this.slimeDie);
+
+
+        console.log("update");
+       
+        this.physics.collide(this.slimes, this.walls);
 
         this.movePlayer();
         if (this.player.y > 340 || this.player.y < 0) {
             this.playerDie();
         }
 
-        if (this.physics.overlap(this.player, this.coin)) {
-            this.takeCoin();
+        if (this.physics.overlap(this.player, this.cola)) {
+            this.takeCola();
         }
-        if (this.physics.overlap(this.player, this.enemies)) {
+        
+        if (this.physics.overlap(this.player, this.slimes)) {
             this.playerDie();
         }
+        if (this.physics.overlap(this.guns, this.slimes)) {
+            this.slimes
+        }
+       
     }
 
-    addEnemy() {
+    addSlime() {
+        let slimeSpeed = -10000/(this.score+50-16.6)+300;
+        let slime = this.slimes.create(250, 20, 'slime');
 
-        let enemySpeed = -10000/(this.score+50-16.6)+300;
-        console.log(enemySpeed);
-
-        let enemy = this.enemies.create(250, -10, 'enemy');
-        enemy.body.gravity.y = 500;
-        enemy.body.velocity.x = Phaser.Math.RND.pick([enemySpeed+20,-(enemySpeed)-20]);
-        enemy.body.bounce.x = 1;
+        slime.body.gravity.y = 500;
+        slime.body.velocity.x = Phaser.Math.RND.pick([slimeSpeed+20,-(slimeSpeed)-20]);
+        slime.body.bounce.x = 1;
         console.log(this.score);
         this.time.addEvent({
             delay: 40000,
-            callback: () => enemy.destroy(),
+            callback: () => slime.destroy(),
         })
     }
 
-    updateCoinPosition() {
+    addGun() {
+        let gunPos = this.player.body.position;
+        // TODO: x pos +-75 je nach player fACE
+
+        let gun = this.guns.create(gunPos.x, gunPos.y, 'gun');
+
+        gun.body.gravity.y = 100;
+        gun.body.velocity.x = 300;
+        gun.body.bounce.x = 1;
+        console.log(this.score);
+        this.time.addEvent({
+            delay: 500,
+            callback: () => gun.destroy(),
+        })
+    }
+
+    updateColaPosition() {
         let xpos = Math.random();
         let positions = [
             { x: 30+xpos*440, y: 60 },
@@ -69,35 +100,46 @@ class Play {
             { x: 30+xpos*440, y: 300 },
         ]
 
-        positions = positions.filter(coin => coin.x !== this.coin.x);
+        positions = positions.filter( cola =>  cola.x !== this.cola.x);
         let newPosition = Phaser.Math.RND.pick(positions);
-        this.coin.setPosition(newPosition.x, newPosition.y);
+        this.cola.setPosition(newPosition.x, newPosition.y);
     }
 
-    takeCoin() {
+    takeCola() {
 
         this.score += 5;
         this.scoreLabel.setText('score: ' + this.score);
-        this.updateCoinPosition();
+        this.updateColaPosition();
+        console.log("geht");
     }
 
 
     movePlayer() {
         if (this.arrow.left.isDown) {
+            
             this.player.body.velocity.x = -200;
+           this.player.flipX = true;
+         
         }
         else if (this.arrow.right.isDown) {
+            
             this.player.body.velocity.x = 200;
+            this.player.flipX = false;
         }
+        else if (this.arrow.down.isDown) {
+            this.addGun();
+        }
+
         else {
             this.player.body.velocity.x = 0;
+             
         }
         if (this.arrow.up.isDown && this.player.body.onFloor()) {
             this.player.body.velocity.y = -320;
-
         }
-
     }
+
+
     createWorld() {
         this.walls = this.physics.add.staticGroup();
         this.walls.create(10, 170, 'wallV');
@@ -117,5 +159,15 @@ class Play {
     }
     playerDie() {
         this.scene.start('menu', {score:this.score });
+    }
+
+    // let slime = ....
+    // this.slimeDie(slime);
+
+    slimeDie(gun, slime) {
+
+        slime.destroy();
+        // ... inclrease sore
+
     }
 }
