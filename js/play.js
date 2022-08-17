@@ -25,9 +25,9 @@ class Play {
 
         });
 
-        console.log("create");
+       
     }
-
+    
     update() {
 
         this.physics.collide(this.player, this.walls);
@@ -37,7 +37,7 @@ class Play {
         this.physics.overlap(this.guns, this.slimes, this.slimeDie);
 
 
-        console.log("update");
+       
        
         this.physics.collide(this.slimes, this.walls);
 
@@ -66,25 +66,38 @@ class Play {
         slime.body.gravity.y = 500;
         slime.body.velocity.x = Phaser.Math.RND.pick([slimeSpeed+20,-(slimeSpeed)-20]);
         slime.body.bounce.x = 1;
-        console.log(this.score);
+         
         this.time.addEvent({
             delay: 40000,
             callback: () => slime.destroy(),
         })
     }
 
-    addGun() {
+    addGun(k) {
         let gunPos = this.player.body.position;
         // TODO: x pos +-75 je nach player fACE
 
         let gun = this.guns.create(gunPos.x, gunPos.y, 'gun');
-
+       
         gun.body.gravity.y = 100;
-        gun.body.velocity.x = 300;
+        
+        gun.body.velocity.x = this.player.body.velocity.x*3;
+        console.log(this.player.velocity);
+        if (this.arrow.left.isUp &&this.arrow.right.isUp ) {
+            console.log("ff");
+            gun.body.velocity.x = k;
+        }
+      /* if (this.player.body.velocity < 1 && this.player.body.velocity > 1   ){
+        console.log("f");
+        gun.body.velocity.x = k;
+*/
+     //  }
+       gun.flipX = this.player.flipX;
+   
         gun.body.bounce.x = 1;
         console.log(this.score);
         this.time.addEvent({
-            delay: 500,
+            delay: 1000,
             callback: () => gun.destroy(),
         })
     }
@@ -110,30 +123,35 @@ class Play {
         this.score += 5;
         this.scoreLabel.setText('score: ' + this.score);
         this.updateColaPosition();
-        console.log("geht");
+       
     }
 
 
     movePlayer() {
+         let k;
         if (this.arrow.left.isDown) {
-            
+            k = -600;
             this.player.body.velocity.x = -200;
            this.player.flipX = true;
-         
+        
         }
         else if (this.arrow.right.isDown) {
-            
+            k = 600;
             this.player.body.velocity.x = 200;
             this.player.flipX = false;
+      
         }
-        else if (this.arrow.down.isDown) {
-            this.addGun();
-        }
-
         else {
             this.player.body.velocity.x = 0;
-             
+    
         }
+         if (this.arrow.down.isDown) {
+          
+            this.addGun(k);
+            
+        }
+
+       
         if (this.arrow.up.isDown && this.player.body.onFloor()) {
             this.player.body.velocity.y = -320;
         }
@@ -167,6 +185,7 @@ class Play {
     slimeDie(gun, slime) {
 
         slime.destroy();
+        gun.destroy();
         // ... inclrease sore
 
     }
