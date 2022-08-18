@@ -1,12 +1,12 @@
 class Play {
 
-    
+
 
     create() {
         this.player = this.physics.add.sprite(250, 170, 'player');
-        
+
         this.player.body.gravity.y = 500;
-      
+
         this.arrow = this.input.keyboard.createCursorKeys();
         this.createWorld();
         this.cola = this.physics.add.sprite(60, 130, 'cola');
@@ -25,20 +25,20 @@ class Play {
 
         });
 
-       
-    }
-    
-    update() {
 
+    }
+
+    update() {
+ 
         this.physics.collide(this.player, this.walls);
         this.physics.collide(this.guns, this.walls);
- //       this.physics.collide(this.guns, this.slimes);
+        //       this.physics.collide(this.guns, this.slimes);
 
         this.physics.overlap(this.guns, this.slimes, this.slimeDie);
 
 
-       
-       
+
+
         this.physics.collide(this.slimes, this.walls);
 
         this.movePlayer();
@@ -49,54 +49,50 @@ class Play {
         if (this.physics.overlap(this.player, this.cola)) {
             this.takeCola();
         }
-        
+
         if (this.physics.overlap(this.player, this.slimes)) {
             this.playerDie();
         }
         if (this.physics.overlap(this.guns, this.slimes)) {
             this.slimes
         }
-       
+
     }
 
     addSlime() {
-        let slimeSpeed = -10000/(this.score+50-16.6)+300;
+        let slimeSpeed = -10000 / (this.score + 50 - 16.6) + 300;
         let slime = this.slimes.create(250, 20, 'slime');
 
         slime.body.gravity.y = 500;
-        slime.body.velocity.x = Phaser.Math.RND.pick([slimeSpeed+20,-(slimeSpeed)-20]);
+        slime.body.velocity.x = Phaser.Math.RND.pick([slimeSpeed + 20, -(slimeSpeed) - 20]);
         slime.body.bounce.x = 1;
-         
+
         this.time.addEvent({
             delay: 40000,
             callback: () => slime.destroy(),
         })
     }
 
-    addGun(k) {
+    addGun() {
         let gunPos = this.player.body.position;
         // TODO: x pos +-75 je nach player fACE
 
         let gun = this.guns.create(gunPos.x, gunPos.y, 'gun');
-       
+
         gun.body.gravity.y = 100;
+
+
         
-        gun.body.velocity.x = this.player.body.velocity.x*3;
-        console.log(this.player.velocity);
-        if (this.arrow.left.isUp &&this.arrow.right.isUp ) {
-            console.log("ff");
-            gun.body.velocity.x = k;
+
+        gun.flipX = this.player.flipX;
+        if(this.player.flipX == true){
+            gun.body.velocity.x = -600;
         }
-      /* if (this.player.body.velocity < 1 && this.player.body.velocity > 1   ){
-        console.log("f");
-        gun.body.velocity.x = k;
-*/
-     //  }
-       gun.flipX = this.player.flipX;
-   
+        else if(this.player.flipX == false){
+            gun.body.velocity.x = 600;
+        }
         gun.body.bounce.x = 1;
-        console.log(this.score);
-        this.time.addEvent({
+         this.time.addEvent({
             delay: 1000,
             callback: () => gun.destroy(),
         })
@@ -105,15 +101,15 @@ class Play {
     updateColaPosition() {
         let xpos = Math.random();
         let positions = [
-            { x: 30+xpos*440, y: 60 },
-            { x: 30+xpos*440, y: 60 },
-            { x: 30+xpos*440, y: 140 },
-            { x: 30+xpos*440, y: 140 },
-            { x: 30+xpos*440, y: 300 },
-            { x: 30+xpos*440, y: 300 },
+            { x: 30 + xpos * 440, y: 60 },
+            { x: 30 + xpos * 440, y: 60 },
+            { x: 30 + xpos * 440, y: 140 },
+            { x: 30 + xpos * 440, y: 140 },
+            { x: 30 + xpos * 440, y: 300 },
+            { x: 30 + xpos * 440, y: 300 },
         ]
 
-        positions = positions.filter( cola =>  cola.x !== this.cola.x);
+        positions = positions.filter(cola => cola.x !== this.cola.x);
         let newPosition = Phaser.Math.RND.pick(positions);
         this.cola.setPosition(newPosition.x, newPosition.y);
     }
@@ -123,35 +119,35 @@ class Play {
         this.score += 5;
         this.scoreLabel.setText('score: ' + this.score);
         this.updateColaPosition();
-       
+
     }
 
 
     movePlayer() {
-         let k;
+
         if (this.arrow.left.isDown) {
-            k = -600;
+           
             this.player.body.velocity.x = -200;
-           this.player.flipX = true;
-        
+            this.player.flipX = true;
+
         }
         else if (this.arrow.right.isDown) {
-            k = 600;
+            
             this.player.body.velocity.x = 200;
             this.player.flipX = false;
-      
+
         }
         else {
             this.player.body.velocity.x = 0;
-    
+
         }
-         if (this.arrow.down.isDown) {
-          
-            this.addGun(k);
-            
+        if (this.arrow.down.isDown) {
+
+            this.addGun();
+
         }
 
-       
+
         if (this.arrow.up.isDown && this.player.body.onFloor()) {
             this.player.body.velocity.y = -320;
         }
@@ -176,7 +172,7 @@ class Play {
 
     }
     playerDie() {
-        this.scene.start('menu', {score:this.score });
+        this.scene.start('menu', { score: this.score });
     }
 
     // let slime = ....
